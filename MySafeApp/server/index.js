@@ -1,4 +1,11 @@
-import 'dotenv/config';
+import dotenv from 'dotenv';
+import path from 'path';
+import { fileURLToPath } from 'url';
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+// Load .env from the root directory (MySafeApp/)
+dotenv.config({ path: path.join(__dirname, '../.env') });
 import express from 'express';
 import cors from 'cors';
 import twilio from 'twilio';
@@ -16,16 +23,22 @@ const defaultToNumber = process.env.EMERGENCY_TO_NUMBER;
 
 const client = accountSid && authToken ? twilio(accountSid, authToken) : null;
 
-// India numbers are stored as plain 10-digit strings (e.g. "7012673042").
-// Twilio requires E.164 format (+91XXXXXXXXXX). This normalizes both cases
-// without breaking numbers that are already in international format.
-function toE164India(rawNumber) {
+// Normalizes phone numbers to E.164 format.
+// Supports numbers that already have country codes (+1, +91)
+// Defaults to India (+91) if exactly 10 digits without a country code.
+function formatPhoneNumber(rawNumber) {
   if (!rawNumber) return null;
   const trimmed = String(rawNumber).trim();
+  
+  // If it already starts with '+', assume it's correctly formatted
   if (trimmed.startsWith('+')) return trimmed;
+  
   const digitsOnly = trimmed.replace(/\D/g, '');
+  
+  // Default to India (+91) if exactly 10 digits
   if (digitsOnly.length === 10) return `+91${digitsOnly}`;
-  if (digitsOnly.length === 12 && digitsOnly.startsWith('91')) return `+${digitsOnly}`;
+  
+  // Otherwise, assume the number includes a country code without the '+'
   return `+${digitsOnly}`;
 }
 
@@ -54,7 +67,7 @@ app.post('/api/sos', async (req, res) => {
     if (rawTargets.length === 0 && defaultToNumber) {
       rawTargets.push(defaultToNumber);
     }
-    const targets = [...new Set(rawTargets.map(toE164India))];
+    const targets = [...new Set(rawTargets.map(formatPhoneNumber))];
 
     if (!client || !fromNumber || targets.length === 0) {
       console.warn('[SOS] Twilio not configured or no targets. Running in dry-run mode.');

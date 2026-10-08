@@ -51,10 +51,6 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     if (storedUser) {
       try {
         const parsed = JSON.parse(storedUser);
-        if (parsed.name && parsed.name.toLowerCase().includes('isaac')) {
-          parsed.name = 'Sarah Jenkins';
-          localStorage.setItem('user', JSON.stringify(parsed));
-        }
         setUser(parsed);
       } catch {
         setUser(null);
@@ -63,17 +59,22 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   }, []);
 
   const login = async (email: string, password: string): Promise<boolean> => {
-    
-    if (email === 'demo@womensafety.com' && password === 'demo123') {
-      const demoUser: User = {
+    const trimmedEmail = email.trim();
+    if (trimmedEmail && password) {
+      const userDisplayName = trimmedEmail.includes('@')
+        ? trimmedEmail.split('@')[0].replace(/[._-]/g, ' ')
+        : 'User';
+      const capitalizedName = userDisplayName.charAt(0).toUpperCase() + userDisplayName.slice(1);
+
+      const currentUser: User = {
         id: '1',
-        name: '',
-        email: 'demo@womensafety.com',
+        name: capitalizedName,
+        email: trimmedEmail,
         phone: '',
         emergencyContacts: []
       };
-      setUser(demoUser);
-      localStorage.setItem('user', JSON.stringify(demoUser));
+      setUser(currentUser);
+      localStorage.setItem('user', JSON.stringify(currentUser));
       return true;
     }
     return false;

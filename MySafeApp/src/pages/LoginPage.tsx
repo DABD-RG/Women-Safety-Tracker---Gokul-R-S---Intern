@@ -4,8 +4,8 @@ import { useAuth } from '../contexts/AuthContext';
 
 
 const LoginPage: React.FC = () => {
-  const [email, setEmail] = useState('demo@womensafety.com');
-  const [password, setPassword] = useState('demo123');
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState('');
@@ -101,11 +101,10 @@ const LoginPage: React.FC = () => {
 
         <div className="mt-8 p-4 bg-indigo-50/50 border border-indigo-100 rounded-2xl text-left">
           <h3 className="text-xs font-black text-indigo-600 uppercase tracking-widest mb-1.5">
-            Demo Credentials
+            Local Access
           </h3>
           <p className="text-[11px] text-slate-500 font-semibold leading-relaxed">
-            Email: <span className="font-mono text-indigo-600">demo@womensafety.com</span><br />
-            Password: <span className="font-mono text-indigo-600">demo123</span>
+            Enter your email and any password to authenticate and access the safety dashboard.
           </p>
         </div>
       </div>
