@@ -371,7 +371,8 @@ If you do not configure Twilio credentials in `.env`, the backend automatically 
 
 ## 🌐 Live Demo & Hosting Limitations
 
-* **Live Demo URL**: Hosted on Netlify (Static Frontend)
+* **Live Demo**: [Woman Safety Tracker](https://woman-safety-app.netlify.app/)
+* **Hosting**: Netlify (Static Frontend)
 * **Architecture Distinction**:
   * **Frontend (Client-Side)**: Deployed statically on Netlify, providing access to the UI, journey setup, maps, fake call generator, and local audit logs.
   * **Backend (Server-Side)**: The Node.js/Express service and Twilio secret keys are **not deployed on the static Netlify host**.
